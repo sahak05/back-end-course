@@ -1,14 +1,20 @@
 const express = require('express')
+const path = require('path')
 
+//my own import 
+//const routeDir = require('./utiils/path')
+const products = []
 const router = express.Router()
 
 router.get('/add-product', (req, res, next) => {
-    res.send('<form action="/product" method="post"><input type="text" name="title"><button type="submit">Add product</button></input></form>')
+    //res.sendFile(path.join(__dirname, '..', 'views', 'add-product.html'))
+    res.render('add-product', {pageTitle: 'Add a product', activeAddProduct: true, formsCSS: true, productCSS: true})
 })
 
-router.post('/product', (req, res, next) => {
-    console.log(req.body)
+router.post('/add-product', (req, res, next) => {
+    products.push( {title: req.body.title} )
     res.redirect('/')
 })
 
-module.exports = router
+exports.routes = router
+exports.products = products

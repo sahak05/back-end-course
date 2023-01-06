@@ -2,18 +2,30 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const PORT = 3000
-
+const path = require('path')
+const expressHbs = require('express-handlebars')
+//my own import 
+const routeDir = require('./utiils/path')
 const app = express()
+
+app.engine('handlebars', expressHbs({layoutsDir: 'views/layouts/', defaultLayout: 'main-layout', extname: 'handlebars'}))
+app.set('view engine', 'handlebars')
+// app.set('view engine', 'pug') //global configuration
+app.set('views', 'views') //where to find the views if the folder isn't called views
+
+app.use(express.static(path.join(routeDir, 'public')))
 
 app.use(bodyParser.urlencoded({extended: false}))
 
-const adminRoutes = require('./routes/admin')
+const adminData = require('./routes/admin')
 const shopRoutes = require('./routes/shop')
 
-app.use(adminRoutes)
+app.use('/admin', adminData.routes)
 app.use(shopRoutes)
 
-
+app.use((req, res,next) => {
+    res.status(404).render('404', {pageTitle: 'Page not found'})
+})
 app.listen(PORT )
 
 // const server = http.createServer((req, res) => {

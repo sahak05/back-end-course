@@ -5,3 +5,6 @@ The following article provides a great overview of available headers and their r
 
 Whilst this article is a great resource, especially to dive deeper, please don't learn this list by heart though! You'll encounter many of these headers throughout the course and I'll explain them when we need them.
 
+Official Pug Docs
+
+Want to learn more about Pug? Check out their official docs: https://pugjs.org/api/getting-started.html
