@@ -3,29 +3,29 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const PORT = 3000
 const path = require('path')
-const expressHbs = require('express-handlebars')
+// const expressHbs = require('express-handlebars')
 //my own import 
+const controllerError = require('./controllers/404')
 const routeDir = require('./utiils/path')
 const app = express()
 
-app.engine('handlebars', expressHbs({layoutsDir: 'views/layouts/', defaultLayout: 'main-layout', extname: 'handlebars'}))
-app.set('view engine', 'handlebars')
+// app.engine('handlebars', expressHbs({layoutsDir: 'views/layouts/', defaultLayout: 'main-layout', extname: 'handlebars'}))
+// app.set('view engine', 'handlebars')
 // app.set('view engine', 'pug') //global configuration
+app.set('view engine', 'ejs')
 app.set('views', 'views') //where to find the views if the folder isn't called views
 
 app.use(express.static(path.join(routeDir, 'public')))
 
 app.use(bodyParser.urlencoded({extended: false}))
 
-const adminData = require('./routes/admin')
+const adminRoutes = require('./routes/admin')
 const shopRoutes = require('./routes/shop')
 
-app.use('/admin', adminData.routes)
+app.use('/admin', adminRoutes)
 app.use(shopRoutes)
 
-app.use((req, res,next) => {
-    res.status(404).render('404', {pageTitle: 'Page not found'})
-})
+app.use(controllerError.getErrorPage)
 app.listen(PORT )
 
 // const server = http.createServer((req, res) => {
