@@ -5,6 +5,7 @@ const PORT = 3000
 const path = require('path')
 // const expressHbs = require('express-handlebars')
 //my own import 
+const db = require('./utiils/database')
 const controllerError = require('./controllers/404')
 const routeDir = require('./utiils/path')
 const app = express()
