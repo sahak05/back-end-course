@@ -5,9 +5,14 @@ const PORT = 3000
 const path = require('path')
 // const expressHbs = require('express-handlebars')
 //my own import 
-const db = require('./utiils/database')
+const sequelize = require('./utiils/database')
 const controllerError = require('./controllers/404')
 const routeDir = require('./utiils/path')
+
+const User = require('./models/user')
+const Product = require('./models/product')
+const Cart = require('./models/cart')
+const CartItem = require('./models/cart-item')
 const app = express()
 
 // app.engine('handlebars', expressHbs({layoutsDir: 'views/layouts/', defaultLayout: 'main-layout', extname: 'handlebars'}))
@@ -23,11 +28,48 @@ app.use(bodyParser.urlencoded({extended: false}))
 const adminRoutes = require('./routes/admin')
 const shopRoutes = require('./routes/shop')
 
+app.use((req, res, next) => {
+    User.findByPk(1).then(
+        user => {
+            req.user = user;
+            next()
+        }
+    ).catch(err => console.log(user))
+})
+
 app.use('/admin', adminRoutes)
 app.use(shopRoutes)
 
 app.use(controllerError.getErrorPage)
-app.listen(PORT )
+
+Product.belongsTo(User, {constraints: true, onDelete: 'CASCADE'})
+User.hasMany(Product)
+User.hasOne(Cart)
+Cart.belongsTo(User)
+Cart.belongsToMany(Product, {through: CartItem})
+Product.belongsToMany(Cart, {through: CartItem})
+
+
+sequelize.sync()
+.then(result => {
+    return User.findByPk(1)
+    
+})
+.then(user =>{
+    if(!user) {
+        return User.create({name: 'Abdoul', email:'sadikouhak@gmail.com'})
+    }
+    return user
+    
+})
+.then( user => {
+    return user.createCart()
+})
+.then( res => {
+    app.listen(PORT)
+})
+.catch(err => console.log(err))
+
 
 // const server = http.createServer((req, res) => {
 //     const url = req.url
